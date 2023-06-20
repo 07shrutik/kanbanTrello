@@ -27,12 +27,39 @@ function Board() {
   const [isShow, setisShow] = useState(false);
   const [isShowBtn, setisShowBtn] = useState(true);
   const [inputvalue, setinputvalue] = useState("");
+  const [names, setNames] = useState("");
+  useEffect(() => {
+    stores.map((item) => {
+      if (item.id == sourceState) {
+        setNames(item.name);
+      }
+    });
+  }, [sourceState]);
+
+  useEffect(() => {
+    let newList = stores.map((item) => {
+      if (item.id === destinationState) {
+        let newTasklist = item.items.map((obj) => {
+          if (obj.id === draggableIdSource && names) {
+            return { ...obj, activity: [...obj.activity, names] };
+          } else {
+            return obj;
+          }
+        });
+        return { ...item, items: newTasklist };
+      } else {
+        return item;
+      }
+    });
+    setStores(newList);
+    localStorage.setItem("List", JSON.stringify(newList));
+  }, [names]);
+
   const handleDragAndDrop = (results) => {
     console.log("res", results);
     const { source, destination, type } = results;
-setDraggableIdSource(results.draggableId);
+    setDraggableIdSource(results.draggableId);
     if (!destination) return;
-
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -56,9 +83,11 @@ setDraggableIdSource(results.draggableId);
     setSourceState(source.droppableId);
     setDestinationState(destination.droppableId);
 
+    //from which last task has been picked
     const storeSourceIndex = stores.findIndex(
       (store) => store.id === source.droppableId
     );
+    //where user is dropping that particular task
     const storeDestinationIndex = stores.findIndex(
       (store) => store.id === destination.droppableId
     );
@@ -66,8 +95,8 @@ setDraggableIdSource(results.draggableId);
     const newSourceItems = [...stores[storeSourceIndex].items];
     const newDestinationItems =
       source.droppableId !== destination.droppableId
-        ? [...stores[storeDestinationIndex].items]
-        : newSourceItems;
+        ? [...stores[storeDestinationIndex].items] //same list just posiiton changed
+        : newSourceItems; //new list
 
     const [deletedItem] = newSourceItems.splice(itemSourceIndex, 1);
     newDestinationItems.splice(itemDestinationIndex, 0, deletedItem);
@@ -76,20 +105,17 @@ setDraggableIdSource(results.draggableId);
 
     newStores[storeSourceIndex] = {
       ...stores[storeSourceIndex],
-      items: newSourceItems,
+      items: newSourceItems, // is removed or position cahnge of task
     };
     newStores[storeDestinationIndex] = {
       ...stores[storeDestinationIndex],
-      items: newDestinationItems,
+      items: newDestinationItems, // new added task
     };
 
     setStores(newStores);
     localStorage.setItem("List", JSON.stringify(newStores));
-
-  
-
-  
   };
+
   function handleChange(e) {
     setinputvalue(e.target.value);
   }
@@ -121,6 +147,7 @@ setDraggableIdSource(results.draggableId);
     <div className={styles.mainContainer}>
       <div className={styles.wrappercontainer}>
         <DragDropContext onDragEnd={handleDragAndDrop}>
+          {/* droppableId is static because we r droping a list in a parent container */}
           <Droppable droppableId="ROOT" type="group">
             {(provided) => (
               <div

@@ -10,8 +10,6 @@ import PopupState, {
   bindDialog,
 } from "material-ui-popup-state";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
-//   import AddSharpIcon from "@mui/icons-material/AddSharp";
-//   import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import MoreHorizSharpIcon from "@mui/icons-material/MoreHorizSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Popover } from "@mui/material";
@@ -39,6 +37,7 @@ export default function Card({ name, items, id }) {
     setlid(id);
     navigate(`/popup/${id}/${index}`);
   }
+
   function handleListdelete(id) {
     let FilteredList = List.filter((obj) => id !== obj.id);
     localStorage.setItem("List", JSON.stringify(FilteredList));
@@ -67,6 +66,7 @@ export default function Card({ name, items, id }) {
           ref={provided.innerRef}
         >
           <div className={style.card}>
+            {/* Listname is printed here */}
             <h1 style={{ color: "grey" }}>{name}</h1>
             <PopupState variant="popover" popupId="demo-popup-popover">
               {(popupState) => (
@@ -108,7 +108,7 @@ export default function Card({ name, items, id }) {
                       >
                         <div className={style.Cardss}>
                           <p>{item.name}</p>
-                          {isEditVisible === index ? (
+                          {isEditVisible === index ? ( //checking here
                             <div className="icon_btn">
                               <IconButton
                                 onClick={() => taskClick(item, index)}
@@ -144,9 +144,9 @@ export default function Card({ name, items, id }) {
                       </div>
                     )}
                   </Draggable>
-                  // </Draggable>
                 ))}
                 {provided.placeholder}
+                {/* buttons and adding task */}
                 <AddCard index={id} />
               </div>
             </div>

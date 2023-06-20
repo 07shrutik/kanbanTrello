@@ -27,7 +27,7 @@ export default function PopUp() {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [listName, setListName] = useState("");
   const [isEditingListName, setIsEditingListName] = useState(false);
-
+  const [names, setNames] = useState("");
   function handleChange(e) {
     setDescription(e.target.value);
   }
@@ -83,7 +83,7 @@ export default function PopUp() {
       setTaskname(taskObject);
       setListName(listObject.name);
     }
-  }, [List, listid, setTaskname, tindex]);
+  }, [List, listid, tindex]);
 
   const handleTaskNameClick = () => {
     setIsEditingName(true);
@@ -204,6 +204,7 @@ export default function PopUp() {
             User moved this card from {act} to {listName}
           </li>
         ))}
+        {/* code to update the activity name */}
         <Comments cardName={listName} />
       </div>
     </>
